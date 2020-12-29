@@ -1,307 +1,246 @@
 package litecoin
 
 import (  
-    "fmt"
-    "time"
-    "strconv"
-    "net/http"
-    "encoding/json"
-    "log"
-    "strings"
-    "blocksdk-go/base"
+    "github.com/Block-Chen/blocksdk-go/base"
 )
 
 type Litecoin struct{
-    base.Base
+	Base *base.Base
 }
 
-func getBlockChain(request = map[string]interface{}) *Litecoin {
-	return Base.request("GET","/ltc/block")
+func NewLitecoinClient(api_token string) *Litecoin {
+	b := base.NewBase(api_token)
+	return &Litecoin{
+		Base : b,
+	}
+}
+
+func (b *Litecoin)GetBlockChain() map[string]interface{}{
+
+	return b.Base.Request("GET","/ltc/block",nil)
 }
 
 
-func getBlock(request = map[string]interface{}) *Litecoin {
+func (b *Litecoin)GetBlock(request map[string]interface{})  map[string]interface{} {
 
-    value, ok := request['rawtx']
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+            request["rawtx"] = false
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
-    }
-
-   	return Base.request("GET","/ltc/block/" + strconv.Itoa(request['block']) ,{
-			"rawtx" : request['rawtx'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-    
-}
-
-
-func getMemPool(request = map[string]interface{}) *Litecoin {
-    value, ok := request['rawtx']
-    if !ok {
-            request['rawtx'] = false
-    }
-    value2, ok2 := request['offset']
-    if !ok2 {
-            request['offset'] = 0
-    }
-
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
-    }  
-
-	return Base.request("GET","/ltc/mempool",{
-			"rawtx" : request['rawtx'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-
-    
-}
-
-
-func getAddressInfo(request = map[string]interface{}) *Litecoin {
-    valuee, okk := request['reverse']
-    if !okk {
-            request['reverse'] = true
-    }
-
-    value, ok := request['rawtx']
-    if !ok {
-            request['rawtx'] = false
-    }
-
-    value2, ok2 := request['offset']
-    if !ok2 {
-            request['offset'] = 0
-    }
-
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
-    }  
-
-
-	return Base.request("GET","/ltc/address/" + strconv.Itoa(request['address']) + "",{
-			"reverse" : request['reverse'],
-			"rawtx" : request['rawtx'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-    
-}
-func getAddressBalance(request = map[string]interface{}) *Litecoin {
-	return Base.request("GET","/ltc/address/" + strconv.Itoa(request['address']) + "/balance")
-
-
-
-    
-}
-func listWallet(request = map[string]interface{}) *Litecoin {
-    value2, ok2 := request['offset']
-    if !ok2 {
-            request['offset'] = 0
-    }
-
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
-    }  
-
-	return Base.request("GET","/ltc/wallet",{
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-    
-}
-func createWallet(request = map[string]interface{}) *Litecoin {
-
-    
-    value, ok := request['name']
-    if !ok {
-            request['name'] = nil
-    }
-
-	return Base.request("POST","/ltc/wallet",{
-			"name" : request['name']
-		})
-}
-func loadWallet(request = map[string]interface{}) *Litecoin {
-	return Base.request("POST","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/load",{
-			"seed_wif" : request['seed_wif'],
-			"password" : request['password']
-		})
-    
-}
-func unLoadWallet(request = map[string]interface{}) *Litecoin {
-		return Base.request("POST","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/unload")
-}
-func listWalletAddress(request = map[string]interface{}) *Litecoin {
-
-    value, ok := request['address']
-    if !ok {
-            request['address'] = nil
-    }
-
-    value1, ok1 := request['hdkeypath']
-    if !ok1 {
-            request['hdkeypath'] = nil
-    }
-    value2, ok2 := request['offset']
-    if !ok2 {
-            request['offset'] = 0
-    }
-    value3, ok3 := request['limit']
+    _, ok3 := request["limit"]
     if !ok3 {
-            request['limit'] = 10
+            request["limit"] = 10
     }
 	
-	return self.request("GET","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/address",{
-			"address" : request['address'],
-			"hdkeypath" : request['hdkeypath'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-    
+    return b.Base.Request("GET","/ltc/block/" + request["block"].(string),request)
 }
 
-func createWalletAddress(request = map[string]interface{}) *Litecoin {
 
-    
-    value, ok := request['seed_wif']
+func (b *Litecoin)GetMemPool(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["rawtx"]
     if !ok {
-            request['seed_wif'] = nil
+            request["rawtx"] = false
     }
-
-    value1, ok1 := request['password']
-    if !ok1 {
-            request['password'] = nil
-    }
-
-        
-	return Base.request("POST","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/address",{
-			"seed_wif" : request['seed_wif'],
-			"password" : request['password']
-		})
-}
-
-func getWalletBalance(request = map[string]interface{}) *Litecoin {
-
-		return Base.request("GET","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/balance")    
-}
-func getWalletTransaction(request = map[string]interface{}) *Litecoin {
-
-	    value, ok := request['order']
-    if !ok {
-            request['order'] = 'desc'
-    }
-
-    value1, ok1 := request['offset']
-    if !ok1 {
-            request['offset'] = 0
-    }
-    value2, ok2 := request['limit']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['limit'] = 10
+            request["offset"] = 0
     }
-    value3, ok3 := request['category']
+
+    _, ok3 := request["limit"]
     if !ok3 {
-            request['category'] = 'all'
-    }
+            request["limit"] = 10
+    }  
 
-	return Base.request("GET","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/transaction",{
-			"category" : request['category'],
-			"order" : request['order'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
+    return b.Base.Request("GET","/ltc/mempool/" ,request)
 }
 
-func sendToAddress(request = map[string]interface{}) *Litecoin {
+
+func (b *Litecoin)GetAddressInfo(request map[string]interface{})  map[string]interface{} {
 
 
-    value, ok := request['kbfee']
+
+    _, okk := request["reverse"]
+    if !okk {
+            request["reverse"] = true
+    }
+
+    _, ok := request["rawtx"]
     if !ok {
-
-        blockChain = *getBlockChain()
-        request['kbfee'] = blockChain['medium_fee_per_kb']
+            request["rawtx"] = false
     }
 
-    value1, ok1 := request['seed_wif']
-    if !ok1 {
-            request['seed_wif'] = nil
-    }
-    value2, ok2 := request['password']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['password'] = nil
+            request["offset"] = 0
     }
 
-	return Base.request("POST","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/sendtoaddress",{
-			"address" : request['address'],
-			"amount" : request['amount'],
-			"seed_wif" : request['seed_wif'],
-			"password" : request['password'],
-			"kbfee" : request['kbfee']
-		})
+    _, ok3 := request["limit"]
+
+    if !ok3 {
+            request["limit"] = 10
+    }  
+
+    return b.Base.Request("GET","/ltc/address/" + request["address"].(string),request)
+    
+}
+func (b *Litecoin)GetAddressBalance(request map[string]interface{})  map[string]interface{} {
+
+    return b.Base.Request("GET","/ltc/address/" + request["address"].(string) + "/balance",nil)
+    
+}
+func (b *Litecoin)ListWallet(request map[string]interface{})  map[string]interface{} {
+    _, ok2 := request["offset"]
+    if !ok2 {
+            request["offset"] = 0
+    }
+
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
+    }  
+
+    return b.Base.Request("GET","/ltc/wallet",request)
+    
+}
+func (b *Litecoin)CreateWallet(request map[string]interface{})  map[string]interface{} {
+
+    _, ok := request["name"]
+    if !ok {
+		request["name"] = nil
+    }
+
+    return b.Base.Request("POST","/ltc/wallet",request)
+    
+}
+func (b *Litecoin)LoadWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/ltc/wallet/" + request["wallet_id"].(string) + "/load",request)
+}
+
+func (b *Litecoin)UnLoadWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/ltc/wallet/" + request["wallet_id"].(string) + "/unload",request)
+}
+
+func (b *Litecoin)ListWalletAddress(request map[string]interface{})  map[string]interface{} {
+    _, ok := request["address"]
+    if !ok {
+            request["address"] = nil
+    }
+
+    _, ok1 := request["hdkeypath"]
+    if !ok1 {
+		request["hdkeypath"] = nil
+    }
+    _, ok2 := request["offset"]
+    if !ok2 {
+            request["offset"] = 0
+    }
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
+    }
+        
+    return b.Base.Request("GET","/ltc/wallet/" + request["wallet_id"].(string) + "/address",request)
+}
+
+
+func (b *Litecoin)CreateWalletAddress(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["seed_wif"]
+    if !ok {
+            request["seed_wif"] = nil
+    }
+
+    _, ok1 := request["password"]
+    if !ok1 {
+            request["password"] = nil
+    }
+
+        
+    return b.Base.Request("POST","/ltc/wallet/" + request["wallet_id"].(string) + "/address",request)
+}
+
+func (b *Litecoin)GetWalletBalance(request map[string]interface{})  map[string]interface{} {
+
+    return b.Base.Request("GET","/ltc/wallet/" + request["wallet_id"].(string) + "/balance",nil)      
+
+}
+
+func (b *Litecoin)GetWalletTransaction(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["order"]
+    if !ok {
+		request["order"] = "desc"
+    }
+
+    _, ok1 := request["offset"]
+    if !ok1 {
+            request["offset"] = 0
+    }
+    _, ok2 := request["limit"]
+    if !ok2 {
+            request["limit"] = 10
+    }
+    _, ok3 := request["category"]
+    if !ok3 {
+		request["category"] = "all"
+    }
+
+
+    return b.Base.Request("GET","/ltc/wallet/" + request["wallet_id"].(string) + "/transaction",request)
+}
+
+func (b *Litecoin)SendToAddress(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["kbfee"]
+    if !ok {
+        blockChain := b.GetBlockChain() 
+        request["kbfee"] = blockChain["medium_fee_per_kb"].(float64)
+    }
+
+    _, ok1 := request["seed_wif"]
+    if !ok1 {
+            request["seed_wif"] = nil
+    }
+    _, ok2 := request["password"]
+    if !ok2 {
+            request["password"] = nil
+    }
 
 
         
-
-    
+    return b.Base.Request("POST","/ltc/wallet/" + request["wallet_id"].(string) + "/sendtoaddress",request)
 }
 
-
-func sendMany(request = map[string]interface{}) *Litecoin {
-    value, ok := request['seed_wif']
+func (b *Litecoin)SendMany(request map[string]interface{})  map[string]interface{} {
+    _, ok := request["seed_wif"]
     if !ok {
 
-        request['seed_wif'] = nil
+        request["seed_wif"] = nil
     }
 
-
-
-    value1, ok1 := request['password']
+    _, ok1 := request["password"]
     if !ok1 {
-            request['password'] = nil
+            request["password"] = nil
     }
-
-	return Base.request("POST","/ltc/wallet/" + strconv.Itoa(request['wallet_id']) + "/sendmany",{
-			"to" : request['to'],
-			"seed_wif" : request['seed_wif'],
-			"password" : request['password']
-		})
-}
-func sendTransaction(request = map[string]interface{}) *Litecoin {
-
-	return Base.request("POST","/ltc/transaction",{
-			"sign_hex" : request['sign_hex']
-		})
-}
-func getTransaction(request = map[string]interface{}) *Litecoin {
-
-	return Base.request("GET","/ltc/transaction/" + strconv.Itoa(request['hash']) + "")
-
+            
+        
+    return b.Base.Request("POST","/ltc/wallet/" + request["wallet_id"].(string) + "/sendmany",request)
 }
 
+func (b *Litecoin)SendTransaction(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/ltc/transaction",request)
+}
 
-
-
-
-
-
-
-
+func (b *Litecoin)GetTransaction(request map[string]interface{})  map[string]interface{} {
+	return b.Base.Request("GET","/ltc/transaction/" + request["hash"].(string) + "",nil)
+}

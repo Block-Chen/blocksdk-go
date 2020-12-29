@@ -1,66 +1,60 @@
 package base
 
 import (  
-    "fmt"
+    "bytes"
     "time"
-    "strconv"
     "net/http"
     "encoding/json"
-    "log"
-    "strings"
 )
 
 const (
     layoutISO = "2006-01-02"
 )
+
 type Base struct {  
     api_token string
 }
 
-func (b *Base) Init(api_token string){
-    b.api_token = api_token
+func NewBase(api_token string) *Base{
+	return &Base{
+		api_token : api_token,
+	}
 }
-func getUsage(request = map[string]interface{}) *Base {
-	value, ok := request['start_date']
 
+func (b *Base)getUsage(request map[string]interface{}) interface{}{
+	_, ok := request["start_date"]
 	if !ok {
-		d := time.Now() - 604800
-		request['start_date'] = d.Format(layoutISO)
+		d := time.Now().AddDate(0,0,-7)
+		request["start_date"] = d.Format(layoutISO)
 	}
 
-	value2,ok2 :=request['end_date']
-	if !=ok2 {
+	_,ok2 := request["end_date"]
+	if !ok2 {
 		d := time.Now()
-		request['end_date'] = d.Format(layoutISO)
+		request["end_date"] = d.Format(layoutISO)
 	}
-
-	return request("GET","/usage",{"start_date": request['start_date'],"end_date": request['end_date']})
-
+	
+	return b.Request("GET","/usage",request)
 }
 
-func listPrice(request = map[string]interface{}) *Base{
-	return request("GET","/price")
+
+func (b *Base)getHashType(request map[string]interface{}) interface{}{
+	return b.Request("GET","/auto/" + request["hash"].(string) + "/type",request)
 }
 
-func getHashType(request = map[string]interface{}) *Base{
-	return request("GET","/auto/" + request ['hash'] + "/type")
-}
-
-func request(method string ,path string,data = map[string]interface{}) ) *Base{
+func (b *Base)Request(method string ,path string,data map[string]interface{}) map[string]interface{}{
 
 	url := "https://api.blocksdk.com/v1" + path
-	if method == "GET" && len(data) > 0 {
+	if method == "GET" && data != nil && len(data) > 0 {
 
 		for key, element := range data {
-			value = element
-			if value == true{
+		
+			if element.(bool) == true{
 				url += key +  "=true&"
-			}
-			else if value == false {
+			}else if element.(bool) == false {
 				url += key + "=false&"
-			}
-			else {
-				url += key+ "=" + strconv.Itoa(value) + "&"
+			}else {
+				url += key+ "=" + element.(string) + "&"
 			}
 		}
 
@@ -70,65 +64,32 @@ func request(method string ,path string,data = map[string]interface{}) ) *Base{
 
 
 
+	client := &http.Client{}
+	buff := bytes.NewBuffer(nil)
 	if method == "POST"{
-		jsonReq, err := json.Marshal(api_token)
-		response, err := http.Post(url, "application/json; charset=utf-8", bytes.NewBuffer(api_token)) 
-
-	}
-	else {
-		jsonReq, err := json.Marshal(api_token)
-		response, err := http.Get(url, "application/json; charset=utf-8", bytes.NewBuffer(api_token)) 
-	}
-	if err != nil {
-		panic(err)
-	}
-
-	body := json.NewDecoder(response.Body)
-	
-	if method == "POST" {
-
-		body = json.NewDecoder(response.Body)
-		converted_json := strings.ReplaceAll(response.Body,':','":')
-		converted_json1 := strings.Split(converted_json,'{\n')
-
-		//remaining
-		for i := 0; i < len(converted_json1); i++ {
-			if converted_json1[i] != ''{
-
-				json2 := strings.Split(converted_json1[i],('":'))
-				json2 = strings.Split(json2,' ')
-				json2 = json2[len(json2)-1]
-
-				converted_json := strings.ReplaceAll(converted_json, json2,'"'+ json2)
-
-			}
-
-			}
-
-		body = json.loads(converted_json)
-	}
-
-
-			
-	if response.Header{
-		headers := response.Header
-	}
-	else{
-		headers := {}
-	}
-
-	if response.StatusCode{
-		status := response.StatusCode
-	}
-	else{
-		status := 0
+		pbytes, _ := json.Marshal(data)
+		buff = bytes.NewBuffer(pbytes)
 	}
 	
-	headers['StatusCode'] = status
-	body['Header'] = headers	
-	return body
+	req, err := http.NewRequest(method,url,buff)
+	req.Header.Add("X-API-KEY",b.api_token)
+	req.Header.Add("Content-Type","application/json")
+ 
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+	defer resp.Body.Close()
+ 
+	body := json.NewDecoder(resp.Body)
+
+	var res  map[string]interface{}
+	body.Decode(&res)
 	
+	res["Header"] = resp.Header
+	res["StatusCode"] = resp.StatusCode
 	
+	return res
 }
 
 

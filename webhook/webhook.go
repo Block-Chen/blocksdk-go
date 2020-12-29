@@ -1,87 +1,80 @@
-package Webhook
+package webhook
 
 import (  
-    "fmt"
-    "blocksdk-go/base"
+    "github.com/Block-Chen/blocksdk-go/base"
 )
 
 type WebHook struct{
-    base.Base
+    Base *base.Base
 }
 
-func create(request = map[string]interface{}) *WebHook {
-	return Base.request("POST","/hook",{"callback" : request['callback'],"category" : request['category'],"address" : request['address']})
+func NewWebHook(api_token string) *WebHook{
+	b := base.NewBase(api_token)
+	
+	return &WebHook{
+		Base : b,
+	}
+}
 
+func (w *WebHook)create(request  map[string]interface{}) map[string]interface{} {
+	return w.Base.Request("POST","/hook",request)
 }
 
 
-func list(request = map[string]interface{}) *WebHook {
-
-
-
-    value, ok := request['offset']
+func (w *WebHook)list(request  map[string]interface{}) map[string]interface{} {
+    _, ok := request["offset"]
     if !ok {
-        request['offset'] = 0
+        request["offset"] = 0
     }
 
-    value1, ok1 := request['limit']
+    _, ok1 := request["limit"]
     if !ok1 {
-            request['limit'] = 10
+            request["limit"] = 10
     }
 		
-	return Base.request("GET","/hook",{"offset" : request['offset'],"limit" : request['limit']})
+	return w.Base.Request("GET","/hook",request)
 		
 }
 
 
-func get(request = map[string]interface{}) *WebHook {
-		return Base.request("GET","/hook/" + strconv.Itoa(request['hook_id']))
+func (w *WebHook)get(request  map[string]interface{}) map[string]interface{} {
+		return w.Base.Request("GET","/hook/" + request["hook_id"].(string),nil)
 
     
 }
 
 
-func delete(request = map[string]interface{}) *WebHook {
-	return Base.request("POST","/hook/" + strconv.Itoa(request['hook_id']) + "/delete")
-
-    
+func (w *WebHook)delete(request  map[string]interface{}) map[string]interface{} {
+	return w.Base.Request("POST","/hook/" + request["hook_id"].(string) + "/delete",nil)
 }
 
 
-func listResponse(request = map[string]interface{}) *WebHook {
+func (w *WebHook)listResponse(request  map[string]interface{}) map[string]interface{} {
 
-    value, ok := request['offset']
+    _, ok := request["offset"]
     if !ok {
-        request['offset'] = 0
+        request["offset"] = 0
     }
 
-    value1, ok1 := request['limit']
+    _, ok1 := request["limit"]
     if !ok1 {
-            request['limit'] = 10
+            request["limit"] = 10
     }
 		
-	return Base.request("GET","/hook/response",{"offset" : request['offset'],"limit" : request['limit']})			
-			
+	return w.Base.Request("GET","/hook/response",request)						
 }
 
-func getResponse(request = map[string]interface{}) *WebHook {
+func (w *WebHook)getResponse(request  map[string]interface{}) map[string]interface{} {
 
-    value, ok := request['offset']
+    _, ok := request["offset"]
     if !ok {
-        request['offset'] = 0
+		request["offset"] = 0
     }
 
-    value1, ok1 := request['limit']
+    _, ok1 := request["limit"]
     if !ok1 {
-            request['limit'] = 10
+       request["limit"] = 10
     }
 	
-	return Base.request("GET","/hook/" + strconv.Itoa(request['hook_id']) + "/response",{"offset" : request['offset'],"limit" : request['limit']})			
-
-
+	return w.Base.Request("GET","/hook/" + request["hook_id"].(string) + "/response",request)			
 }
-
-
-
-
-

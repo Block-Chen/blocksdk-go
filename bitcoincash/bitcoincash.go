@@ -2,309 +2,246 @@
 package bitcoincash
 
 import (  
-    "fmt"
-    "time"
-    "strconv"
-    "net/http"
-    "encoding/json"
-    "log"
-    "strings"
-    "blocksdk-go/base"
+    "github.com/Block-Chen/blocksdk-go/base"
 )
 
 type Bitcoincash struct{
-    base.Base
+	Base *base.Base
 }
 
-func getBlockChain(request = map[string]interface{}) *Bitcoincash {
+func NewBitcoincashClient(api_token string) *Bitcoincash {
+	b := base.NewBase(api_token)
+	return &Bitcoincash{
+		Base : b,
+	}
+}
 
-	return Base.request("GET","/bch/block")
+func (b *Bitcoincash)GetBlockChain() map[string]interface{}{
+
+	return b.Base.Request("GET","/bch/block",nil)
 }
 
 
-func getBlock(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)GetBlock(request map[string]interface{})  map[string]interface{} {
 
-    value, ok := request['rawtx']
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+            request["rawtx"] = false
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
-    }        
-    return Base.request("GET","/bch/block/" + strconv.Itoa(request['block']) + "",{
-            "rawtx" : request['rawtx'],
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
-
-
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
+    }
+	
+    return b.Base.Request("GET","/bch/block/" + request["block"].(string),request)
 }
 
 
-func getMemPool(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)GetMemPool(request map[string]interface{})  map[string]interface{} {
 
-        value, ok := request['rawtx']
+
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+            request["rawtx"] = false
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
     }  
 
-    return Base.request("GET","/bch/mempool",{
-            "rawtx" : request['rawtx'],
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
+    return b.Base.Request("GET","/bch/mempool/" ,request)
 }
 
 
-func getAddressInfo(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)GetAddressInfo(request map[string]interface{})  map[string]interface{} {
 
 
-    valuee, okk := request['reverse']
+
+    _, okk := request["reverse"]
     if !okk {
-            request['reverse'] = true
+            request["reverse"] = true
     }
 
-    value, ok := request['rawtx']
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+            request["rawtx"] = false
     }
 
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
+    _, ok3 := request["limit"]
 
-    if !ok2 {
-            request['limit'] = 10
+    if !ok3 {
+            request["limit"] = 10
     }  
 
-    return self.request("GET","/bch/address/" + strconv.Itoa(request['address']) + "",{
-            "reverse" : request['reverse'],
-            "rawtx" : request['rawtx'],
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
-
+    return b.Base.Request("GET","/bch/address/" + request["address"].(string),request)
     
 }
-func getAddressBalance(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)GetAddressBalance(request map[string]interface{})  map[string]interface{} {
 
-
-	return Base.request("GET","/bch/address/" + strconv.Itoa(request['address']) + "/balance")
-
+    return b.Base.Request("GET","/bch/address/" + request["address"].(string) + "/balance",nil)
     
 }
-func listWallet(request = map[string]interface{}) *Bitcoincash {
-
-    value2, ok2 := request['offset']
+func (b *Bitcoincash)ListWallet(request map[string]interface{})  map[string]interface{} {
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
     }  
-    return Base.request("GET","/bch/wallet",{
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
-}
-func createWallet(request = map[string]interface{}) *Bitcoincash {
 
-	    value, ok := request['name']
-    if !ok {
-            request['name'] = nil
-    }
-
-
-    return Base.request("POST","/btc/wallet",{
-                 "name" : request['name']
-    })
+    return b.Base.Request("GET","/bch/wallet",request)
     
 }
-func loadWallet(request = map[string]interface{}) *Bitcoincash {
-	    return Base.request("POST","/btc/wallet/" +strconv.Itoa(request['wallet_id'])+"/load",{
-            "seed_wif" : request['seed_wif'],
-            "password" : request['password']
-        })
-    
-}
-func unLoadWallet(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)CreateWallet(request map[string]interface{})  map[string]interface{} {
 
-
-
-     return Base.request("POST","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/unload")
-}
-
-
-func createWalletAddress(request = map[string]interface{}) *Bitcoincash {
-
-    value, ok := request['seed_wif']
+    _, ok := request["name"]
     if !ok {
-            request['seed_wif'] = nil
+		request["name"] = nil
     }
 
-    value1, ok1 := request['password']
+    return b.Base.Request("POST","/bch/wallet",request)
+    
+}
+func (b *Bitcoincash)LoadWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/bch/wallet/" + request["wallet_id"].(string) + "/load",request)
+}
+
+func (b *Bitcoincash)UnLoadWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/bch/wallet/" + request["wallet_id"].(string) + "/unload",request)
+}
+
+func (b *Bitcoincash)ListWalletAddress(request map[string]interface{})  map[string]interface{} {
+    _, ok := request["address"]
+    if !ok {
+            request["address"] = nil
+    }
+
+    _, ok1 := request["hdkeypath"]
     if !ok1 {
-            request['password'] = nil
+		request["hdkeypath"] = nil
+    }
+    _, ok2 := request["offset"]
+    if !ok2 {
+            request["offset"] = 0
+    }
+    _, ok3 := request["limit"]
+    if !ok3 {
+            request["limit"] = 10
+    }
+        
+    return b.Base.Request("GET","/bch/wallet/" + request["wallet_id"].(string) + "/address",request)
+}
+
+
+func (b *Bitcoincash)CreateWalletAddress(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["seed_wif"]
+    if !ok {
+            request["seed_wif"] = nil
+    }
+
+    _, ok1 := request["password"]
+    if !ok1 {
+            request["password"] = nil
     }
 
         
-    return Base.request("POST","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/address",{
-            "seed_wif" : request['seed_wif'],
-            "password" : request['password']
-        })
+    return b.Base.Request("POST","/bch/wallet/" + request["wallet_id"].(string) + "/address",request)
 }
- 
 
-func getWalletBalance(request = map[string]interface{}) *Bitcoincash {
+func (b *Bitcoincash)GetWalletBalance(request map[string]interface{})  map[string]interface{} {
 
-    return Base.request("GET","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/balance")      
+    return b.Base.Request("GET","/bch/wallet/" + request["wallet_id"].(string) + "/balance",nil)      
 
-    
 }
-func getWalletTransaction(request = map[string]interface{}) *Bitcoincash {
+
+func (b *Bitcoincash)GetWalletTransaction(request map[string]interface{})  map[string]interface{} {
 
 
-    value, ok := request['order']
+    _, ok := request["order"]
     if !ok {
-            request['order'] = 'desc'
+		request["order"] = "desc"
     }
 
-    value1, ok1 := request['offset']
+    _, ok1 := request["offset"]
     if !ok1 {
-            request['offset'] = 0
+            request["offset"] = 0
     }
-    value2, ok2 := request['limit']
+    _, ok2 := request["limit"]
     if !ok2 {
-            request['limit'] = 10
+            request["limit"] = 10
     }
-    value3, ok3 := request['category']
+    _, ok3 := request["category"]
     if !ok3 {
-            request['category'] = 'all'
+		request["category"] = "all"
     }
 
 
-    return Base.request("GET","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/transaction",{
-            "category" : request['category'],
-            "order" : request['order'],
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
-    
+    return b.Base.Request("GET","/bch/wallet/" + request["wallet_id"].(string) + "/transaction",request)
 }
-func listWalletAddress(request = map[string]interface{}) *Bitcoincash {
-	    value, ok := request['address']
+
+func (b *Bitcoincash)SendToAddress(request map[string]interface{})  map[string]interface{} {
+
+
+    _, ok := request["kbfee"]
     if !ok {
-            request['address'] = nil
+        blockChain := b.GetBlockChain() 
+        request["kbfee"] = blockChain["medium_fee_per_kb"].(float64)
     }
 
-    value1, ok1 := request['hdkeypath']
+    _, ok1 := request["seed_wif"]
     if !ok1 {
-            request['hdkeypath'] = nil
+            request["seed_wif"] = nil
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["password"]
     if !ok2 {
-            request['offset'] = 0
-    }
-    value3, ok3 := request['limit']
-    if !ok3 {
-            request['limit'] = 10
+            request["password"] = nil
     }
 
 
         
-    return Base.request("GET","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/address",{
-            "address" : request['address'],
-            "hdkeypath" : request['hdkeypath'],
-            "offset" : request['offset'],
-            "limit" : request['limit']
-        })
-    
+    return b.Base.Request("POST","/bch/wallet/" + request["wallet_id"].(string) + "/sendtoaddress",request)
 }
-func sendToAddress(request = map[string]interface{}) *Bitcoincash {
-	    value, ok := request['kbfee']
+
+func (b *Bitcoincash)SendMany(request map[string]interface{})  map[string]interface{} {
+    _, ok := request["seed_wif"]
     if !ok {
 
-        blockChain = *getBlockChain()
-        request['kbfee'] = blockChain['medium_fee_per_kb']
+        request["seed_wif"] = nil
     }
 
-    value1, ok1 := request['seed_wif']
+    _, ok1 := request["password"]
     if !ok1 {
-            request['seed_wif'] = nil
-    }
-    value2, ok2 := request['password']
-    if !ok2 {
-            request['password'] = nil
-    }
-
-
-
-    return Base.request("POST","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/sendtoaddress",{
-            "address" : request['address'],
-            "amount" : request['amount'],
-            "seed_wif" : request['seed_wif'],
-            "password" : request['password'],
-            "kbfee" : request['kbfee']
-        })
-    
-}
-func sendMany(request = map[string]interface{}) *Bitcoincash {
-
-    value, ok := request['seed_wif']
-    if !ok {
-
-        request['seed_wif'] = nil
-    }
-
-
-
-    value1, ok1 := request['password']
-    if !ok1 {
-            request['password'] = nil
+            request["password"] = nil
     }
             
-
         
-    return Base.request("POST","/btc/wallet/" + strconv.Itoa(request['wallet_id']) + "/sendmany",{
-            "to" : request['to'],
-            "seed_wif" : request['seed_wif'],
-            "password" : request['password']
-        })
-    
+    return b.Base.Request("POST","/bch/wallet/" + request["wallet_id"].(string) + "/sendmany",request)
 }
 
-func getTransaction(request = map[string]interface{}) *Bitcoincash {
-
-        return Base.request("GET","/btc/transaction/" + strconv.Itoa(request['hash']) + "")
-    
+func (b *Bitcoincash)SendTransaction(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/bch/transaction",request)
 }
 
-
-
-
-
-
-
+func (b *Bitcoincash)GetTransaction(request map[string]interface{})  map[string]interface{} {
+	return b.Base.Request("GET","/bch/transaction/" + request["hash"].(string) + "",nil)
+}

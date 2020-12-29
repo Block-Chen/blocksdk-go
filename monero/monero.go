@@ -1,159 +1,121 @@
 package monero
 
-import (  
-    "fmt"
-    "time"
-    "strconv"
-    "net/http"
-    "encoding/json"
-    "log"
-    "strings"
-    "blocksdk-go/base"
+
+
+import (
+    "github.com/Block-Chen/blocksdk-go/base"
 )
 
 type Monero struct{
-    Base base.Base
+    Base *base.Base
 }
 
-func getBlockChain(request = map[string]interface{}) *Monero {
-	return Base.request("GET","/xmr/block")
+func NewMoneroClient(api_token string) *Monero {
+	b := base.NewBase(api_token)
+	return &Monero{
+		Base : b,
+	}
+}
 
+func (m *Monero)GetBlockChain() map[string]interface{} {
+	return m.Base.Request("GET","/xmr/block",nil)
 }
 
 
-func getBlock(request = map[string]interface{}) *Monero {
-    value, ok := request['rawtx']
+func (m *Monero)GetBlock(request  map[string]interface{}) map[string]interface{} {
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+		request["rawtx"] = false
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+		request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
+    _, ok3 := request["limit"]
+    if !ok3 {
+		request["limit"] = 10
     }
 
-	return Base.request("GET","/xmr/block/" + strconv.Itoa(request['block']) + "",{
-			"rawtx" : request['rawtx'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-
-    
-
+	return m.Base.Request("GET","/xmr/block/" + request["block"].(string) + "",request)
 }
 
 
-func getMemPool(request = map[string]interface{}) *Monero {
+func (m *Monero)GetMemPool(request  map[string]interface{}) map[string]interface{} {
 
-        value, ok := request['rawtx']
+        _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+		request["rawtx"] = false
     }
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+		request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
+    _, ok3 := request["limit"]
+    if !ok3 {
+		request["limit"] = 10
     }  
 
 
-	return Base.request("GET","/xmr/mempool",{
-			"rawtx" : request['rawtx'],
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-
+	return m.Base.Request("GET","/xmr/mempool",request)
 }
 
 
-func listAddress(request = map[string]interface{}) *Monero {
-    value, ok := request['offset']
+func (m *Monero)listAddress(request  map[string]interface{}) map[string]interface{} {
+    _, ok := request["offset"]
     if !ok {
-            request['offset'] = 0
+            request["offset"] = 0
     }
-    value2, ok2 := request['limit']
+    _, ok2 := request["limit"]
     if !ok2 {
-            request['limit'] = 10
+            request["limit"] = 10
     }
-	return Base.request("GET","/xmr/address",{
-			"offset" : request['offset'],
-			"limit" : request['limit']
-		})
-    
+	return m.Base.Request("GET","/xmr/address",request)
 }
 
 
 
-func loadAddress(request = map[string]interface{}) *Monero {
-	return Base.request("POST","/xmr/address/" + strconv.Itoa(request['address_id']) + "/load",{
-			"private_spend_key" : request['private_spend_key'],
-			"password" : request['password']
-		})
-    
+func (m *Monero)loadAddress(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/load",request)
 }
-func unLoadAddress(request = map[string]interface{}) *Monero {
-	return Base.request("POST","/xmr/address/" + strconv.Itoa(request['address_id']) + "/unload")
-
-    
+func (m *Monero)unLoadAddress(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/unload",request)
 }
-func createAddress(request = map[string]interface{}) *Monero {
-
-    value, ok := request['name']
+func (m *Monero)createAddress(request  map[string]interface{}) map[string]interface{} {
+    _, ok := request["name"]
     if !ok {
-            request['name'] = nil
+		request["name"] = nil
     }
 	
-	return Base.request("POST","/xmr/address",{
-			"name" : request['name']
-		})
-    
+	return m.Base.Request("POST","/xmr/address",request)
 }
-func getAddressInfo(request = map[string]interface{}) *Monero {
-
-        valuee, okk := request['reverse']
+func (m *Monero)GetAddressInfo(request  map[string]interface{}) map[string]interface{} {
+	_, okk := request["reverse"]
     if !okk {
-            request['reverse'] = true
+		request["reverse"] = true
     }
 
-    value, ok := request['rawtx']
+    _, ok := request["rawtx"]
     if !ok {
-            request['rawtx'] = false
+		request["rawtx"] = false
     }
 
-    value2, ok2 := request['offset']
+    _, ok2 := request["offset"]
     if !ok2 {
-            request['offset'] = 0
+		request["offset"] = 0
     }
 
-    value3, ok3 := request['limit']
-
-    if !ok2 {
-            request['limit'] = 10
+    _, ok3 := request["limit"]
+    if !ok3 {
+		request["limit"] = 10
     }  
 
-
-	return Base.request("GET","/xmr/address/" + strconv.Itoa(request['address_id']) + "",{
-			"offset" : request['offset'],
-			"limit" : request['limit'],
-			"private_spend_key" : request['private_spend_key'],
-		})
-    
+	return m.Base.Request("GET","/xmr/address/" + request["address_id"].(string),request)
 }
 
-func getAddressBalance(request = map[string]interface{}) *Monero {
-	return Base.request("GET","/xmr/address/" + strconv.Itoa(request['address_id']) + "/balance",{
-			"private_spend_key" : request['private_spend_key'],
-		})
-    
+func (m *Monero)GetAddressBalance(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("GET","/xmr/address/" + request["address_id"].(string) + "/balance",request)
 }
 
 
@@ -163,40 +125,30 @@ func getAddressBalance(request = map[string]interface{}) *Monero {
 
 
 
-func sendToAddress(request = map[string]interface{}) *Monero {
+func (m *Monero)sendToAddress(request  map[string]interface{}) map[string]interface{} {
 
-    value, ok := request['kbfee']
+    _, ok := request["kbfee"]
     if !ok {
 
-        blockChain = *getBlockChain()
-        request['kbfee'] = blockChain['medium_fee_per_kb']
+        blockChain := m.GetBlockChain()
+        request["kbfee"] = blockChain["medium_fee_per_kb"].(float64)
     }
 
-    value1, ok1 := request['seed_wif']
+    _, ok1 := request["seed_wif"]
     if !ok1 {
-            request['seed_wif'] = nil
+            request["seed_wif"] = nil
     }
-    value2, ok2 := request['password']
+    _, ok2 := request["password"]
     if !ok2 {
-            request['password'] = nil
+            request["password"] = nil
     }
 
-	return Base.request("POST","/xmr/address/" + strconv.Itoa(request['address_id']) + "/sendtoaddress",{
-			"address" : request['address'],
-			"amount" : request['amount'],
-			"private_spend_key" : request['private_spend_key'],
-			"password" : request['password'],
-			"kbfee" : request['kbfee']
-		})
-
-
+	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/sendtoaddress",request)
 }
 
 
-func getTransaction(request = map[string]interface{}) *Monero {
-	return Base.request("GET","/xmr/transaction/" + strconv.Itoa(request['hash']) + "")
-
-    
+func (m *Monero)GetTransaction(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("GET","/xmr/transaction/" + request["hash"].(string),request)
 }
 
 

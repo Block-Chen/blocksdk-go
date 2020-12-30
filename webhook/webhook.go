@@ -16,12 +16,12 @@ func NewWebHook(api_token string) *WebHook{
 	}
 }
 
-func (w *WebHook)create(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)Create(request  map[string]interface{}) map[string]interface{} {
 	return w.Base.Request("POST","/hook",request)
 }
 
 
-func (w *WebHook)list(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)List(request  map[string]interface{}) map[string]interface{} {
     _, ok := request["offset"]
     if !ok {
         request["offset"] = 0
@@ -37,19 +37,19 @@ func (w *WebHook)list(request  map[string]interface{}) map[string]interface{} {
 }
 
 
-func (w *WebHook)get(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)Get(request  map[string]interface{}) map[string]interface{} {
 		return w.Base.Request("GET","/hook/" + request["hook_id"].(string),nil)
 
     
 }
 
 
-func (w *WebHook)delete(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)Delete(request  map[string]interface{}) map[string]interface{} {
 	return w.Base.Request("POST","/hook/" + request["hook_id"].(string) + "/delete",nil)
 }
 
 
-func (w *WebHook)listResponse(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)ListResponse(request  map[string]interface{}) map[string]interface{} {
 
     _, ok := request["offset"]
     if !ok {
@@ -64,7 +64,7 @@ func (w *WebHook)listResponse(request  map[string]interface{}) map[string]interf
 	return w.Base.Request("GET","/hook/response",request)						
 }
 
-func (w *WebHook)getResponse(request  map[string]interface{}) map[string]interface{} {
+func (w *WebHook)GetResponse(request  map[string]interface{}) map[string]interface{} {
 
     _, ok := request["offset"]
     if !ok {

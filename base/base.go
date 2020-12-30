@@ -21,7 +21,7 @@ func NewBase(api_token string) *Base{
 	}
 }
 
-func (b *Base)getUsage(request map[string]interface{}) interface{}{
+func (b *Base)GetUsage(request map[string]interface{}) interface{}{
 	_, ok := request["start_date"]
 	if !ok {
 		d := time.Now().AddDate(0,0,-7)
@@ -38,7 +38,7 @@ func (b *Base)getUsage(request map[string]interface{}) interface{}{
 }
 
 
-func (b *Base)getHashType(request map[string]interface{}) interface{}{
+func (b *Base)GetHashType(request map[string]interface{}) interface{}{
 	return b.Request("GET","/auto/" + request["hash"].(string) + "/type",request)
 }
 

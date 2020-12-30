@@ -62,7 +62,7 @@ func (m *Monero)GetMemPool(request  map[string]interface{}) map[string]interface
 }
 
 
-func (m *Monero)listAddress(request  map[string]interface{}) map[string]interface{} {
+func (m *Monero)ListAddress(request  map[string]interface{}) map[string]interface{} {
     _, ok := request["offset"]
     if !ok {
             request["offset"] = 0
@@ -76,13 +76,15 @@ func (m *Monero)listAddress(request  map[string]interface{}) map[string]interfac
 
 
 
-func (m *Monero)loadAddress(request  map[string]interface{}) map[string]interface{} {
+func (m *Monero)LoadAddress(request  map[string]interface{}) map[string]interface{} {
 	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/load",request)
 }
-func (m *Monero)unLoadAddress(request  map[string]interface{}) map[string]interface{} {
+
+func (m *Monero)UnLoadAddress(request  map[string]interface{}) map[string]interface{} {
 	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/unload",request)
 }
-func (m *Monero)createAddress(request  map[string]interface{}) map[string]interface{} {
+
+func (m *Monero)CreateAddress(request  map[string]interface{}) map[string]interface{} {
     _, ok := request["name"]
     if !ok {
 		request["name"] = nil
@@ -120,12 +122,7 @@ func (m *Monero)GetAddressBalance(request  map[string]interface{}) map[string]in
 
 
 
-
-
-
-
-
-func (m *Monero)sendToAddress(request  map[string]interface{}) map[string]interface{} {
+func (m *Monero)SendToAddress(request  map[string]interface{}) map[string]interface{} {
 
     _, ok := request["kbfee"]
     if !ok {

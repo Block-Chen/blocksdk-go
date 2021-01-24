@@ -9,65 +9,86 @@ import (
     "github.com/Block-Chen/blocksdk-go/ethereum"
     "github.com/Block-Chen/blocksdk-go/monero"
     "github.com/Block-Chen/blocksdk-go/webhook"
+    "github.com/Block-Chen/blocksdk-go/market"
+    "github.com/Block-Chen/blocksdk-go/token"
+    "github.com/Block-Chen/blocksdk-go/tool"
 )
 
 type BlockSDK struct {  
     api_token string
 }
 
-func NewBlockSDK(api_token string) *BlockSDK{
+func New(api_token string) *BlockSDK{
 	return &BlockSDK{
 		api_token : api_token,
 	}
 }
 
 func (b *BlockSDK)CreateBitcoin() *bitcoin.Bitcoin {
-    return bitcoin.NewBitcoinClient(b.api_token)
+    return bitcoin.New(b.api_token)
 }
 func (b *BlockSDK)CreateBitcoinCash() *bitcoincash.Bitcoincash {
-    return bitcoincash.NewBitcoincashClient(b.api_token)
+    return bitcoincash.New(b.api_token)
 }
 func (b *BlockSDK)CreateLitecoin() *litecoin.Litecoin {
-    return litecoin.NewLitecoinClient(b.api_token)
+    return litecoin.New(b.api_token)
 }
 func (b *BlockSDK)CreateDash() *dash.Dash {
-    return dash.NewDashClient(b.api_token)
+    return dash.New(b.api_token)
 }
 func (b *BlockSDK)CreateEthereum() *ethereum.Ethereum {
-    return ethereum.NewEthereumClient(b.api_token)
+    return ethereum.New(b.api_token)
 }
 func (b *BlockSDK)CreateMonero() *monero.Monero {
-    return monero.NewMoneroClient(b.api_token)
+    return monero.New(b.api_token)
 }
 func (b *BlockSDK)CreateWebHook() *webhook.WebHook {
-    return webhook.NewWebHook(b.api_token)
+    return webhook.New(b.api_token)
+}
+func (b *BlockSDK)CreateMarket() *market.Market {
+    return market.New(b.api_token)
+}
+func (b *BlockSDK)CreateToken() *token.Token {
+    return token.New(b.api_token)
+}
+func (b *BlockSDK)CreateTool() *tool.Tool {
+    return tool.New(b.api_token)
 }
 
 
 func CreateBitcoin(api_token string) *bitcoin.Bitcoin {
-    return bitcoin.NewBitcoinClient(api_token)
+    return bitcoin.New(api_token)
 }
 
 func CreateBitcoinCash(api_token string) *bitcoincash.Bitcoincash {
-    return bitcoincash.NewBitcoincashClient(api_token)
+    return bitcoincash.New(api_token)
 }
 
 func CreateLitecoin(api_token string) *litecoin.Litecoin {
-    return litecoin.NewLitecoinClient(api_token)
+    return litecoin.New(api_token)
 }
 
 func CreateDash(api_token string) *dash.Dash {
-    return dash.NewDashClient(api_token)
+    return dash.New(api_token)
 }
 
 func CreateEthereum(api_token string) *ethereum.Ethereum {
-    return ethereum.NewEthereumClient(api_token)
+    return ethereum.New(api_token)
 }
 
 func CreateMonero(api_token string) *monero.Monero {
-    return monero.NewMoneroClient(api_token)
+    return monero.New(api_token)
 }
 
 func CreateWebHook(api_token string) *webhook.WebHook {
-    return webhook.NewWebHook(api_token)
+    return webhook.New(api_token)
+}
+func CreateMarket(api_token string) *market.Market {
+    return market.New(api_token)
+}
+func CreateToken(api_token string) *token.Token {
+    return token.New(api_token)
+}
+func CreateTool(api_token string) *tool.Tool {
+    return tool.New(api_token)
 }

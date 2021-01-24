@@ -8,245 +8,83 @@ type Bitcoin struct{
 	Base *base.Base
 }
 
-func NewBitcoinClient(api_token string) *Bitcoin {
-	b := base.NewBase(api_token)
+func New(api_token string) *Bitcoin {
+	b := base.New(api_token)
 	return &Bitcoin{
 		Base : b,
 	}
 }
 
 func (b *Bitcoin)GetBlockChain() map[string]interface{}{
-
-	return b.Base.Request("GET","/btc/block",nil)
+	return b.Base.Request("GET","/btc/info",nil)
 }
 
 
 func (b *Bitcoin)GetBlock(request map[string]interface{})  map[string]interface{} {
-
-    _, ok := request["rawtx"]
-    if !ok {
-            request["rawtx"] = false
-    }
-    _, ok2 := request["offset"]
-    if !ok2 {
-            request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-            request["limit"] = 10
-    }
-	
-    return b.Base.Request("GET","/btc/block/" + request["block"].(string),request)
+    return b.Base.Request("GET","/btc/blocks/" + b.Base.ToString(request["block"]),request)
 }
 
 
 func (b *Bitcoin)GetMemPool(request map[string]interface{})  map[string]interface{} {
-
-
-    _, ok := request["rawtx"]
-    if !ok {
-            request["rawtx"] = false
-    }
-    _, ok2 := request["offset"]
-    if !ok2 {
-            request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-            request["limit"] = 10
-    }  
-
     return b.Base.Request("GET","/btc/mempool/" ,request)
 }
 
 
 func (b *Bitcoin)GetAddressInfo(request map[string]interface{})  map[string]interface{} {
-
-
-
-    _, okk := request["reverse"]
-    if !okk {
-            request["reverse"] = true
-    }
-
-    _, ok := request["rawtx"]
-    if !ok {
-            request["rawtx"] = false
-    }
-
-    _, ok2 := request["offset"]
-    if !ok2 {
-            request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-
-    if !ok3 {
-            request["limit"] = 10
-    }  
-
-    return b.Base.Request("GET","/btc/address/" + request["address"].(string),request)
+    return b.Base.Request("GET","/btc/addresses/" +  b.Base.ToString(request["address"]),request)
     
 }
 func (b *Bitcoin)GetAddressBalance(request map[string]interface{})  map[string]interface{} {
-
-    return b.Base.Request("GET","/btc/address/" + request["address"].(string) + "/balance",nil)
-    
+    return b.Base.Request("GET","/btc/addresses/" +  b.Base.ToString(request["address"]) + "/balance",nil)
 }
-func (b *Bitcoin)ListWallet(request map[string]interface{})  map[string]interface{} {
-    _, ok2 := request["offset"]
-    if !ok2 {
-            request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-            request["limit"] = 10
-    }  
-
-    return b.Base.Request("GET","/btc/wallet",request)
-    
+func (b *Bitcoin)GetWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("GET","/btc/wallets/"  +  b.Base.ToString(request["wallet_id"]),request)
 }
-func (b *Bitcoin)CreateWallet(request map[string]interface{})  map[string]interface{} {
-
-    _, ok := request["name"]
-    if !ok {
-		request["name"] = nil
-    }
-
-    return b.Base.Request("POST","/btc/wallet",request)
-    
+func (b *Bitcoin)GetWallets(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("GET","/btc/wallets",request)
+}
+func (b *Bitcoin)CreateHdWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/btc/wallets/hd",request)
 }
 func (b *Bitcoin)LoadWallet(request map[string]interface{})  map[string]interface{} {
-    return b.Base.Request("POST","/btc/wallet/" + request["wallet_id"].(string) + "/load",request)
+    return b.Base.Request("POST","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/load",request)
 }
 
-func (b *Bitcoin)UnLoadWallet(request map[string]interface{})  map[string]interface{} {
-    return b.Base.Request("POST","/btc/wallet/" + request["wallet_id"].(string) + "/unload",request)
+func (b *Bitcoin)UnloadWallet(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("POST","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/unload",request)
 }
 
-func (b *Bitcoin)ListWalletAddress(request map[string]interface{})  map[string]interface{} {
-    _, ok := request["address"]
-    if !ok {
-            request["address"] = nil
-    }
-
-    _, ok1 := request["hdkeypath"]
-    if !ok1 {
-		request["hdkeypath"] = nil
-    }
-    _, ok2 := request["offset"]
-    if !ok2 {
-            request["offset"] = 0
-    }
-    _, ok3 := request["limit"]
-    if !ok3 {
-            request["limit"] = 10
-    }
-        
-    return b.Base.Request("GET","/btc/wallet/" + request["wallet_id"].(string) + "/address",request)
+func (b *Bitcoin)GetWalletAddresses(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("GET","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/address",request)
 }
 
 
 func (b *Bitcoin)CreateWalletAddress(request map[string]interface{})  map[string]interface{} {
-
-
-    _, ok := request["seed_wif"]
-    if !ok {
-            request["seed_wif"] = nil
-    }
-
-    _, ok1 := request["password"]
-    if !ok1 {
-            request["password"] = nil
-    }
-
-        
-    return b.Base.Request("POST","/btc/wallet/" + request["wallet_id"].(string) + "/address",request)
+    return b.Base.Request("POST","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/address",request)
 }
 
 func (b *Bitcoin)GetWalletBalance(request map[string]interface{})  map[string]interface{} {
-
-    return b.Base.Request("GET","/btc/wallet/" + request["wallet_id"].(string) + "/balance",nil)      
-
+    return b.Base.Request("GET","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/balance",nil)      
 }
 
-func (b *Bitcoin)GetWalletTransaction(request map[string]interface{})  map[string]interface{} {
-
-
-    _, ok := request["order"]
-    if !ok {
-		request["order"] = "desc"
-    }
-
-    _, ok1 := request["offset"]
-    if !ok1 {
-            request["offset"] = 0
-    }
-    _, ok2 := request["limit"]
-    if !ok2 {
-            request["limit"] = 10
-    }
-    _, ok3 := request["category"]
-    if !ok3 {
-		request["category"] = "all"
-    }
-
-
-    return b.Base.Request("GET","/btc/wallet/" + request["wallet_id"].(string) + "/transaction",request)
+func (b *Bitcoin)GetWalletTransactions(request map[string]interface{})  map[string]interface{} {
+    return b.Base.Request("GET","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/transactions",request)
 }
 
 func (b *Bitcoin)SendToAddress(request map[string]interface{})  map[string]interface{} {
-
-
-    _, ok := request["kbfee"]
-    if !ok {
-        blockChain := b.GetBlockChain() 
-        request["kbfee"] = blockChain["medium_fee_per_kb"].(float64)
-    }
-
-    _, ok1 := request["seed_wif"]
-    if !ok1 {
-            request["seed_wif"] = nil
-    }
-    _, ok2 := request["password"]
-    if !ok2 {
-            request["password"] = nil
-    }
-
-
-        
-    return b.Base.Request("POST","/btc/wallet/" + request["wallet_id"].(string) + "/sendtoaddress",request)
+    return b.Base.Request("POST","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/sendtoaddress",request)
 }
 
 func (b *Bitcoin)SendMany(request map[string]interface{})  map[string]interface{} {
-    _, ok := request["seed_wif"]
-    if !ok {
-
-        request["seed_wif"] = nil
-    }
-
-    _, ok1 := request["password"]
-    if !ok1 {
-            request["password"] = nil
-    }
-            
-        
-    return b.Base.Request("POST","/btc/wallet/" + request["wallet_id"].(string) + "/sendmany",request)
+    return b.Base.Request("POST","/btc/wallets/" +  b.Base.ToString(request["wallet_id"]) + "/sendmany",request)
 }
 
 func (b *Bitcoin)SendTransaction(request map[string]interface{})  map[string]interface{} {
-    return b.Base.Request("POST","/btc/transaction",request)
+    return b.Base.Request("POST","/btc/transactions/send",request)
 }
 
 func (b *Bitcoin)GetTransaction(request map[string]interface{})  map[string]interface{} {
-	return b.Base.Request("GET","/btc/transaction/" + request["hash"].(string) + "",nil)
+	return b.Base.Request("GET","/btc/transactions/" +  b.Base.ToString(request["hash"]) + "",nil)
 }
 
-func (b *Bitcoin)GetTransactionTracking(request map[string]interface{})  map[string]interface{} {
-    return b.Base.Request("GET","/btc/transaction/" + request["hash"].(string) + "/tracking",nil)
-    
-}
 

@@ -10,142 +10,63 @@ type Monero struct{
     Base *base.Base
 }
 
-func NewMoneroClient(api_token string) *Monero {
-	b := base.NewBase(api_token)
+func New(api_token string) *Monero {
+	b := base.New(api_token)
 	return &Monero{
 		Base : b,
 	}
 }
 
 func (m *Monero)GetBlockChain() map[string]interface{} {
-	return m.Base.Request("GET","/xmr/block",nil)
+	return m.Base.Request("GET","/xmr/info",nil)
 }
 
 
 func (m *Monero)GetBlock(request  map[string]interface{}) map[string]interface{} {
-    _, ok := request["rawtx"]
-    if !ok {
-		request["rawtx"] = false
-    }
-    _, ok2 := request["offset"]
-    if !ok2 {
-		request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-		request["limit"] = 10
-    }
-
-	return m.Base.Request("GET","/xmr/block/" + request["block"].(string) + "",request)
+	return m.Base.Request("GET","/xmr/blocks/" + m.Base.ToString(request["block"]),request)
 }
 
 
 func (m *Monero)GetMemPool(request  map[string]interface{}) map[string]interface{} {
-
-        _, ok := request["rawtx"]
-    if !ok {
-		request["rawtx"] = false
-    }
-    _, ok2 := request["offset"]
-    if !ok2 {
-		request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-		request["limit"] = 10
-    }  
-
-
 	return m.Base.Request("GET","/xmr/mempool",request)
 }
 
 
-func (m *Monero)ListAddress(request  map[string]interface{}) map[string]interface{} {
-    _, ok := request["offset"]
-    if !ok {
-            request["offset"] = 0
-    }
-    _, ok2 := request["limit"]
-    if !ok2 {
-            request["limit"] = 10
-    }
-	return m.Base.Request("GET","/xmr/address",request)
+func (m *Monero)GetAddresses(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("GET","/xmr/addresses",request)
 }
-
-
 
 func (m *Monero)LoadAddress(request  map[string]interface{}) map[string]interface{} {
-	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/load",request)
+	return m.Base.Request("POST","/xmr/addresses/" + m.Base.ToString(request["address_id"]) + "/load",request)
 }
 
-func (m *Monero)UnLoadAddress(request  map[string]interface{}) map[string]interface{} {
-	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/unload",request)
+func (m *Monero)UnloadAddress(request  map[string]interface{}) map[string]interface{} {
+	return m.Base.Request("POST","/xmr/addresses/" + m.Base.ToString(request["address_id"]) + "/unload",request)
 }
 
 func (m *Monero)CreateAddress(request  map[string]interface{}) map[string]interface{} {
-    _, ok := request["name"]
-    if !ok {
-		request["name"] = nil
-    }
-	
-	return m.Base.Request("POST","/xmr/address",request)
+	return m.Base.Request("POST","/xmr/addresses",request)
 }
+
 func (m *Monero)GetAddressInfo(request  map[string]interface{}) map[string]interface{} {
-	_, okk := request["reverse"]
-    if !okk {
-		request["reverse"] = true
-    }
-
-    _, ok := request["rawtx"]
-    if !ok {
-		request["rawtx"] = false
-    }
-
-    _, ok2 := request["offset"]
-    if !ok2 {
-		request["offset"] = 0
-    }
-
-    _, ok3 := request["limit"]
-    if !ok3 {
-		request["limit"] = 10
-    }  
-
-	return m.Base.Request("GET","/xmr/address/" + request["address_id"].(string),request)
+	return m.Base.Request("GET","/xmr/addresses/" + m.Base.ToString(request["address_id"]),request)
 }
 
 func (m *Monero)GetAddressBalance(request  map[string]interface{}) map[string]interface{} {
-	return m.Base.Request("GET","/xmr/address/" + request["address_id"].(string) + "/balance",request)
+	return m.Base.Request("GET","/xmr/addresses/" + m.Base.ToString(request["address_id"]) + "/balance",request)
 }
-
-
 
 func (m *Monero)SendToAddress(request  map[string]interface{}) map[string]interface{} {
 
-    _, ok := request["kbfee"]
-    if !ok {
-
-        blockChain := m.GetBlockChain()
-        request["kbfee"] = blockChain["medium_fee_per_kb"].(float64)
-    }
-
-    _, ok1 := request["seed_wif"]
-    if !ok1 {
-            request["seed_wif"] = nil
-    }
-    _, ok2 := request["password"]
-    if !ok2 {
-            request["password"] = nil
-    }
-
-	return m.Base.Request("POST","/xmr/address/" + request["address_id"].(string) + "/sendtoaddress",request)
+	return m.Base.Request("POST","/xmr/addresses/" + m.Base.ToString(request["address_id"]) + "/sendtoaddress",request)
 }
 
+func (m *Monero)SendTransaction(request map[string]interface{})  map[string]interface{} {
+	return m.Base.Request("POST","/eth/transactions/send",request)
+}
 
 func (m *Monero)GetTransaction(request  map[string]interface{}) map[string]interface{} {
-	return m.Base.Request("GET","/xmr/transaction/" + request["hash"].(string),request)
+	return m.Base.Request("GET","/xmr/transactions/" + m.Base.ToString(request["hash"]),request)
 }
 
 

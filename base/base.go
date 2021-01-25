@@ -1,6 +1,7 @@
 package base
 
 import (  
+    "fmt"
     "strconv"
     "bytes"
     "net/http"
@@ -26,8 +27,16 @@ func (b *Base)ToString(data interface{}) string{
 			}else{
 				return "false"
 			}
+			
 		case int: 
 			return strconv.Itoa(v)
+			
+		case float32: 
+			return fmt.Sprintf("%f", v)
+			
+		case float64: 
+			return fmt.Sprintf("%f", v)
+			
 		case string: 
 			return v
 	} 
@@ -40,13 +49,13 @@ func (b *Base)Request(method string ,path string,data map[string]interface{}) ma
 
 	url := "https://api.blocksdk.com/v2" + path
 	if method == "GET" && data != nil && len(data) > 0 {
-
+		url += "?"
+		
 		for key, element := range data {
 			url += key+ "=" + b.ToString(element) + "&"
 		}
 	}
-
-
+	
 	client := &http.Client{}
 	buff := bytes.NewBuffer(nil)
 	if method == "POST"{
@@ -63,7 +72,7 @@ func (b *Base)Request(method string ,path string,data map[string]interface{}) ma
         panic(err)
     }
 	defer resp.Body.Close()
- 
+	
 	body := json.NewDecoder(resp.Body)
 
 	var res  map[string]interface{}
@@ -71,8 +80,6 @@ func (b *Base)Request(method string ,path string,data map[string]interface{}) ma
 	
 	return res
 }
-
-
 
 
 

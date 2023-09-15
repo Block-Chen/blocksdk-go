@@ -2,35 +2,49 @@
 [아발란체 개발자 문서 바로가기](https://documenter.getpostman.com/view/20292093/Uz5FKwxw#24d81559-cf32-4228-b4e6-2a9817110bae)
 함수 호출에 필요한 매개변수 또는 반환되는 데이터에 대해서는 REST API 개발자 문서를 참고해 주시길 바랍니다.
 
-
 ### 클라이언트 생성 (테스트넷)
-```js
-const BLOCKSDK = require('blocksdk-js');
-const client = new BLOCKSDK("YOU_TOKEN");
+```go
+package main
+
+import (
+	"fmt"
+	blocksdk "github.com/Block-Chen/blocksdk-go"
+)
+
+func main() {
+    avaxClient := blocksdk.NewAvalanche("YOU_TOKEN", "https://testnet-api.blocksdk.com/")
+}
 ```
 
 ### 클라이언트 생성 (메인넷)
-엔드 포인트를 지정해주지 않는경우 테스트넷으로 기본 설정되어 호출 됩니다 메인넷은 아래 예시와 같이 클라이언트 생성시 두번째 매개변수를 메인넷으로 지정해 주시길 바랍니다.
-```js
-const BLOCKSDK = require('blocksdk-js');
-const client = new BLOCKSDK("YOU_TOKEN","https://mainnet-api.blocksdk.com/avax");
+```go
+package main
+
+import (
+	"fmt"
+	blocksdk "github.com/Block-Chen/blocksdk-go"
+)
+
+func main() {
+    avaxClient := blocksdk.NewAvalanche("YOU_TOKEN", "https://mainnet-api.blocksdk.com/")
+}
 ```
 
 ### 블록체인 정보
 ```
 GET /v3/avax/info
 ```
-```js
-const result = client.avalanche.GetBlockChainInfo();
+```go
+result, err := avaxClient.GetBlockChainInfo()
 ```
 
 ### 블록 정보
 ```
 GET /v3/avax/block/<block>
 ```
-```js
-result = client.avalanche.GetBlock({
-    'block' : "blockNumber 또는 blockHash"
+```go
+result, err := avaxClient.GetBlock(map[string]interface{}{
+    "block" : "blockNumber 또는 blockHash",
 });
 ```
 
@@ -38,10 +52,10 @@ result = client.avalanche.GetBlock({
 ```
 GET /v3/avax/address
 ```
-```js
-result = client.avalanche.GetAddresses({
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetAddresses(map[string]interface{}{
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -49,11 +63,11 @@ result = client.avalanche.GetAddresses({
 ```
 GET /v3/avax/address/<address>/info
 ```
-```js
-result = client.avalanche.GetAddressInfo({
-    'address' : "주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetAddressInfo(map[string]interface{}{
+    "address" : "주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -61,9 +75,9 @@ result = client.avalanche.GetAddressInfo({
 ```
 POST /v3/avax/address
 ```
-```js
-result = client.avalanche.CreateAddress({
-    'name' : "test"
+```go
+result, err := avaxClient.CreateAddress(map[string]interface{}{
+    "name" : "test",
 });
 ```
 
@@ -71,9 +85,9 @@ result = client.avalanche.CreateAddress({
 ```
 GET /v3/avax/address/<address>/balance
 ```
-```js
-result = client.avalanche.GetAddressBalance({
-    'address' : "주소"
+```go
+result, err := avaxClient.GetAddressBalance(map[string]interface{}{
+    "address" : "주소",
 });
 ```
 
@@ -81,12 +95,12 @@ result = client.avalanche.GetAddressBalance({
 ```
 POST /v3/avax/address/<from_address>/send
 ```
-```js
-result = client.avalanche.Send({
-    'from' : "주소",
-    'to' : "주소",
-    'amount' : "보낼 양",
-    'private_key' : "보내는 주소 키"
+```go
+result, err := avaxClient.Send(map[string]interface{}{
+    "from" : "주소",
+    "to" : "주소",
+    "amount" : "보낼 양",
+    "private_key" : "보내는 주소 키",
 });
 ```
 
@@ -94,9 +108,9 @@ result = client.avalanche.Send({
 ```
 POST /v3/avax/transaction/send
 ```
-```js
-result = client.avalanche.SendTransaction({
-    'hex' : "서명된 트랜잭션 hex"
+```go
+result, err := avaxClient.SendTransaction(map[string]interface{}{
+    "hex" : "서명된 트랜잭션 hex",
 });
 ```
 
@@ -104,9 +118,9 @@ result = client.avalanche.SendTransaction({
 ```
 GET /v3/avax/transaction/<tx_hash>
 ```
-```js
-result = client.avalanche.GetTransaction({
-    'hash' : "트랜잭션 해쉬"
+```go
+result, err := avaxClient.GetTransaction(map[string]interface{}{
+    "hash" : "트랜잭션 해쉬",
 });
 ```
 
@@ -114,9 +128,9 @@ result = client.avalanche.GetTransaction({
 ```
 GET /v3/avax/token/<contract_address>/info
 ```
-```js
-result = client.avalanche.GetTokenInfo({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소"
+```go
+result, err := avaxClient.GetTokenInfo(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
 });
 ```
 
@@ -124,10 +138,10 @@ result = client.avalanche.GetTokenInfo({
 ```
 GET /v3/avax/token/<contract_address>/<from_address>/balance
 ```
-```js
-result = client.avalanche.GetTokenBalance({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "잔액을 조회할 주소"
+```go
+result, err := avaxClient.GetTokenBalance(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "잔액을 조회할 주소",
 });
 ```
 
@@ -135,13 +149,13 @@ result = client.avalanche.GetTokenBalance({
 ```
 POST /v3/avax/token/<contract_address>/<from_address>/transfer
 ```
-```js
-result = client.avalanche.SendToken({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "토큰을 전송할 주소",
-    'to' : "주소",
-    'amount' : "보낼 양",
-    'private_key' : "보내는 주소 키"
+```go
+result, err := avaxClient.SendToken(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "토큰을 전송할 주소",
+    "to" : "주소",
+    "amount" : "보낼 양",
+    "private_key" : "보내는 주소 키",
 });
 ```
 
@@ -149,11 +163,11 @@ result = client.avalanche.SendToken({
 ```
 GET /v3/avax/token/<from_address>/transactions
 ```
-```js
-result = client.avalanche.GetTokenTxs({
-    'from_address' : "거래 내역을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetTokenTxs(map[string]interface{}{
+    "from_address" : "거래 내역을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -161,12 +175,12 @@ result = client.avalanche.GetTokenTxs({
 ```
 GET /v3/avax/token/<contract_address>/<from_address>/transactions
 ```
-```js
-result = client.avalanche.GetTokenContractTxs({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "거래 내역을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetTokenContractTxs(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "거래 내역을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -174,11 +188,11 @@ result = client.avalanche.GetTokenContractTxs({
 ```
 GET /v3/avax/token/<from_address>/all-balance
 ```
-```js
-result = client.avalanche.GetTokenAllBalance({
-    'from_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetTokenAllBalance(map[string]interface{}{
+    "from_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -186,11 +200,11 @@ result = client.avalanche.GetTokenAllBalance({
 ```
 GET /v3/avax/single-nft/<contract_address>/nfts
 ```
-```js
-result = client.avalanche.GetSingleNfts({
-    'contract_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNfts(map[string]interface{}{
+    "contract_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -199,11 +213,11 @@ result = client.avalanche.GetSingleNfts({
 ```
 GET /v3/avax/single-nft/<owner_address>/owner-nfts
 ```
-```js
-result = client.avalanche.GetSingleOwnerNfts({
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleOwnerNfts(map[string]interface{}{
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -212,11 +226,11 @@ result = client.avalanche.GetSingleOwnerNfts({
 ```
 GET /v3/avax/single-nft/<creator_address>/creator-nfts
 ```
-```js
-result = client.avalanche.GetSingleCreatorNfts({
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleCreatorNfts(map[string]interface{}{
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -224,11 +238,11 @@ result = client.avalanche.GetSingleCreatorNfts({
 ```
 GET /v3/avax/single-nft/<from_address>/transactions
 ```
-```js
-result = client.avalanche.GetSingleTxs({
-    'from_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleTxs(map[string]interface{}{
+    "from_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -237,12 +251,12 @@ result = client.avalanche.GetSingleTxs({
 ```
 GET /v3/avax/single-nft/<contract_address>/<owner_address>/owner-nfts
 ```
-```js
-result = client.avalanche.GetSingleNftOwnerNfts({
-    'contract_address' : "컨트렉트 주소",
-    'owner_address' : "월렛 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNftOwnerNfts(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "owner_address" : "월렛 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -251,12 +265,12 @@ result = client.avalanche.GetSingleNftOwnerNfts({
 ```
 GET /v3/avax/single-nft/<contract_address>/<creator_address>/creator-nfts
 ```
-```js
-result = client.avalanche.GetSingleNftCreatorNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'creator_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNftCreatorNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "creator_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -265,12 +279,12 @@ result = client.avalanche.GetSingleNftCreatorNfts({
 ```
 GET /v3/avax/single-nft/<contract_address>/<from_address>/from-transactions
 ```
-```js
-result = client.avalanche.GetSingleNftTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNftTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -279,12 +293,12 @@ result = client.avalanche.GetSingleNftTxs({
 ```
 GET /v3/avax/single-nft/<contract_address>/<token_id>/nft-transactions
 ```
-```js
-result = client.avalanche.GetSingleNftTokenTxs({
-    'contract_address' :  "NFT 컨트렉트 주소",
-    'token_id' :  "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNftTokenTxs(map[string]interface{}{
+    "contract_address" :  "NFT 컨트렉트 주소",
+    "token_id" :  "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -293,12 +307,12 @@ result = client.avalanche.GetSingleNftTokenTxs({
 ```
 GET /v3/avax/single-nft/<contract_address>/<token_id>/info
 ```
-```js
-result = client.avalanche.GetSingleNftInfo({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' :  "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetSingleNftInfo(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" :  "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -307,11 +321,11 @@ result = client.avalanche.GetSingleNftInfo({
 ```
 GET /v3/avax/multi-nft/<contract_address>/nfts
 ```
-```js
-result = client.avalanche.GetMultiNfts({
-    'contract_address' :"NFT 컨트렉트 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNfts(map[string]interface{}{
+    "contract_address" :"NFT 컨트렉트 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -320,11 +334,11 @@ result = client.avalanche.GetMultiNfts({
 ```
 GET /v3/avax/multi-nft/<owner_address>/owner-nfts
 ```
-```js
-result = client.avalanche.GetMultiOwnerNfts({
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiOwnerNfts(map[string]interface{}{
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -333,11 +347,11 @@ result = client.avalanche.GetMultiOwnerNfts({
 ```
 GET /v3/avax/multi-nft/<creator_address>/creator-nfts
 ```
-```js
-result = client.avalanche.GetMultiCreatorNfts({
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiCreatorNfts(map[string]interface{}{
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -346,11 +360,11 @@ result = client.avalanche.GetMultiCreatorNfts({
 ```
 GET /v3/avax/multi-nft/<from_address>/transactions
 ```
-```js
-result = client.avalanche.GetMultiTxs({
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiTxs(map[string]interface{}{
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -359,12 +373,12 @@ result = client.avalanche.GetMultiTxs({
 ```
 GET /v3/avax/multi-nft/<contract_address>/<owner_address>/owner-nfts
 ```
-```js
-result = client.avalanche.GetMultiNftOwnerNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNftOwnerNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -373,12 +387,12 @@ result = client.avalanche.GetMultiNftOwnerNfts({
 ```
 GET /v3/avax/multi-nft/<contract_address>/<creator_address>/creator-nfts
 ```
-```js
-result = client.avalanche.GetMultiNftCreatorNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNftCreatorNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -387,12 +401,12 @@ result = client.avalanche.GetMultiNftCreatorNfts({
 ```
 GET /v3/avax/multi-nft/<contract_address>/<from_address>/from-transactions
 ```
-```js
-result = client.avalanche.GetMultiNftTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNftTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -401,12 +415,12 @@ result = client.avalanche.GetMultiNftTxs({
 ```
 GET /v3/avax/multi-nft/<contract_address>/<token_id>/info
 ```
-```js
-result = client.avalanche.GetMultiNftInfo({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' : "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNftInfo(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" : "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -415,12 +429,12 @@ result = client.avalanche.GetMultiNftInfo({
 ```
 GET /v3/avax/multi-nft/<contract_address>/<token_id>/nft-transactions
 ```
-```js
-result = client.avalanche.GetMultiNftTokenTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' : "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := avaxClient.GetMultiNftTokenTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" : "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -429,13 +443,13 @@ result = client.avalanche.GetMultiNftTokenTxs({
 ```
 POST /v3/avax/contract/<contract_address>/read
 ```
-```js
-result = client.avalanche.ReadContract({
-    'contract_address' : "컨트렉트 주소",
-    'method' : "실행할 함수 명",
-    'return_type' : "반환 데이터 타입",
-    'parameter_type' : ["인풋 파라미터 타입"],
-    'parameter_data' : ["인풋 파라미터 데이터"]
+```go
+result, err := avaxClient.ReadContract(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "method" : "실행할 함수 명",
+    "return_type" : "반환 데이터 타입",
+    "parameter_type" : []interface{}{"인풋 파라미터 타입"},
+    "parameter_data" : []interface{}{"인풋 파라미터 데이터"},
 });
 ```
 
@@ -444,13 +458,13 @@ result = client.avalanche.ReadContract({
 ```
 POST /v3/avax/contract/<contract_address>/write
 ```
-```js
-result = client.avalanche.WriteContract({
-    'contract_address' : "컨트렉트 주소",
-    'from' : "트랜잭션을 생성할 주소",
-    'private_key' : "from 의 프라이빗키",
-    'method' : "실행할 함수 명",
-    'parameter_type' : ["인풋 파라미터 타입"],
-    'parameter_data' : ["인풋 파라미터 데이터"]
+```go
+result, err := avaxClient.WriteContract(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "from" : "트랜잭션을 생성할 주소",
+    "private_key" : "from 의 프라이빗키",
+    "method" : "실행할 함수 명",
+    "parameter_type" : []interface{}{"인풋 파라미터 타입"},
+    "parameter_data" : []interface{}{"인풋 파라미터 데이터"},
 });
 ```

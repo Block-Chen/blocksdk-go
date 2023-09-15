@@ -3,33 +3,48 @@
 함수 호출에 필요한 매개변수 또는 반환되는 데이터에 대해서는 REST API 개발자 문서를 참고해 주시길 바랍니다.
 
 ### 클라이언트 생성 (테스트넷)
-```js
-const BLOCKSDK = require('blocksdk-js');
-const client = new BLOCKSDK("YOU_TOKEN");
+```go
+package main
+
+import (
+	"fmt"
+	blocksdk "github.com/Block-Chen/blocksdk-go"
+)
+
+func main() {
+    maticClient := blocksdk.NewPolygon("YOU_TOKEN", "https://testnet-api.blocksdk.com/")
+}
 ```
 
 ### 클라이언트 생성 (메인넷)
-엔드 포인트를 지정해주지 않는경우 테스트넷으로 기본 설정되어 호출 됩니다 메인넷은 아래 예시와 같이 클라이언트 생성시 두번째 매개변수를 메인넷으로 지정해 주시길 바랍니다.
-```js
-const BLOCKSDK = require('blocksdk-js');
-const client = new BLOCKSDK("YOU_TOKEN","https://mainnet-api.blocksdk.com/matic");
+```go
+package main
+
+import (
+	"fmt"
+	blocksdk "github.com/Block-Chen/blocksdk-go"
+)
+
+func main() {
+    maticClient := blocksdk.NewPolygon("YOU_TOKEN", "https://mainnet-api.blocksdk.com/")
+}
 ```
 
 ### 블록체인 정보
 ```
 GET /v3/matic/info
 ```
-```js
-const result = client.polygon.GetBlockChainInfo();
+```go
+result, err := maticClient.GetBlockChainInfo()
 ```
 
 ### 블록 정보
 ```
 GET /v3/matic/block/<block>
 ```
-```js
-result = client.polygon.GetBlock({
-    'block' : "blockNumber 또는 blockHash"
+```go
+result, err := maticClient.GetBlock(map[string]interface{}{
+    "block" : "blockNumber 또는 blockHash",
 });
 ```
 
@@ -37,10 +52,10 @@ result = client.polygon.GetBlock({
 ```
 GET /v3/matic/address
 ```
-```js
-result = client.polygon.GetAddresses({
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetAddresses(map[string]interface{}{
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -48,11 +63,11 @@ result = client.polygon.GetAddresses({
 ```
 GET /v3/matic/address/<address>/info
 ```
-```js
-result = client.polygon.GetAddressInfo({
-    'address' : "주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetAddressInfo(map[string]interface{}{
+    "address" : "주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -60,9 +75,9 @@ result = client.polygon.GetAddressInfo({
 ```
 POST /v3/matic/address
 ```
-```js
-result = client.polygon.CreateAddress({
-    'name' : "test"
+```go
+result, err := maticClient.CreateAddress(map[string]interface{}{
+    "name" : "test",
 });
 ```
 
@@ -70,9 +85,9 @@ result = client.polygon.CreateAddress({
 ```
 GET /v3/matic/address/<address>/balance
 ```
-```js
-result = client.polygon.GetAddressBalance({
-    'address' : "주소"
+```go
+result, err := maticClient.GetAddressBalance(map[string]interface{}{
+    "address" : "주소",
 });
 ```
 
@@ -80,12 +95,12 @@ result = client.polygon.GetAddressBalance({
 ```
 POST /v3/matic/address/<from_address>/send
 ```
-```js
-result = client.polygon.Send({
-    'from' : "주소",
-    'to' : "주소",
-    'amount' : "보낼 양",
-    'private_key' : "보내는 주소 키"
+```go
+result, err := maticClient.Send(map[string]interface{}{
+    "from" : "주소",
+    "to" : "주소",
+    "amount" : "보낼 양",
+    "private_key" : "보내는 주소 키",
 });
 ```
 
@@ -93,9 +108,9 @@ result = client.polygon.Send({
 ```
 POST /v3/matic/transaction/send
 ```
-```js
-result = client.polygon.SendTransaction({
-    'hex' : "서명된 트랜잭션 hex"
+```go
+result, err := maticClient.SendTransaction(map[string]interface{}{
+    "hex" : "서명된 트랜잭션 hex",
 });
 ```
 
@@ -103,9 +118,9 @@ result = client.polygon.SendTransaction({
 ```
 GET /v3/matic/transaction/<tx_hash>
 ```
-```js
-result = client.polygon.GetTransaction({
-    'hash' : "트랜잭션 해쉬"
+```go
+result, err := maticClient.GetTransaction(map[string]interface{}{
+    "hash" : "트랜잭션 해쉬",
 });
 ```
 
@@ -113,9 +128,9 @@ result = client.polygon.GetTransaction({
 ```
 GET /v3/matic/token/<contract_address>/info
 ```
-```js
-result = client.polygon.GetTokenInfo({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소"
+```go
+result, err := maticClient.GetTokenInfo(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
 });
 ```
 
@@ -123,10 +138,10 @@ result = client.polygon.GetTokenInfo({
 ```
 GET /v3/matic/token/<contract_address>/<from_address>/balance
 ```
-```js
-result = client.polygon.GetTokenBalance({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "잔액을 조회할 주소"
+```go
+result, err := maticClient.GetTokenBalance(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "잔액을 조회할 주소",
 });
 ```
 
@@ -134,13 +149,13 @@ result = client.polygon.GetTokenBalance({
 ```
 POST /v3/matic/token/<contract_address>/<from_address>/transfer
 ```
-```js
-result = client.polygon.SendToken({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "토큰을 전송할 주소",
-    'to' : "주소",
-    'amount' : "보낼 양",
-    'private_key' : "보내는 주소 키"
+```go
+result, err := maticClient.SendToken(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "토큰을 전송할 주소",
+    "to" : "주소",
+    "amount" : "보낼 양",
+    "private_key" : "보내는 주소 키",
 });
 ```
 
@@ -148,11 +163,11 @@ result = client.polygon.SendToken({
 ```
 GET /v3/matic/token/<from_address>/transactions
 ```
-```js
-result = client.polygon.GetTokenTxs({
-    'from_address' : "거래 내역을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetTokenTxs(map[string]interface{}{
+    "from_address" : "거래 내역을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -160,12 +175,12 @@ result = client.polygon.GetTokenTxs({
 ```
 GET /v3/matic/token/<contract_address>/<from_address>/transactions
 ```
-```js
-result = client.polygon.GetTokenContractTxs({
-    'contract_address' : "ERC20 토큰 컨트렉트 주소",
-    'from_address' : "거래 내역을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetTokenContractTxs(map[string]interface{}{
+    "contract_address" : "ERC20 토큰 컨트렉트 주소",
+    "from_address" : "거래 내역을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -173,11 +188,11 @@ result = client.polygon.GetTokenContractTxs({
 ```
 GET /v3/matic/token/<from_address>/all-balance
 ```
-```js
-result = client.polygon.GetTokenAllBalance({
-    'from_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetTokenAllBalance(map[string]interface{}{
+    "from_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -185,11 +200,11 @@ result = client.polygon.GetTokenAllBalance({
 ```
 GET /v3/matic/single-nft/<contract_address>/nfts
 ```
-```js
-result = client.polygon.GetSingleNfts({
-    'contract_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNfts(map[string]interface{}{
+    "contract_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -198,11 +213,11 @@ result = client.polygon.GetSingleNfts({
 ```
 GET /v3/matic/single-nft/<owner_address>/owner-nfts
 ```
-```js
-result = client.polygon.GetSingleOwnerNfts({
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleOwnerNfts(map[string]interface{}{
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -211,11 +226,11 @@ result = client.polygon.GetSingleOwnerNfts({
 ```
 GET /v3/matic/single-nft/<creator_address>/creator-nfts
 ```
-```js
-result = client.polygon.GetSingleCreatorNfts({
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleCreatorNfts(map[string]interface{}{
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -223,11 +238,11 @@ result = client.polygon.GetSingleCreatorNfts({
 ```
 GET /v3/matic/single-nft/<from_address>/transactions
 ```
-```js
-result = client.polygon.GetSingleTxs({
-    'from_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleTxs(map[string]interface{}{
+    "from_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -236,12 +251,12 @@ result = client.polygon.GetSingleTxs({
 ```
 GET /v3/matic/single-nft/<contract_address>/<owner_address>/owner-nfts
 ```
-```js
-result = client.polygon.GetSingleNftOwnerNfts({
-    'contract_address' : "컨트렉트 주소",
-    'owner_address' : "월렛 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNftOwnerNfts(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "owner_address" : "월렛 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -250,12 +265,12 @@ result = client.polygon.GetSingleNftOwnerNfts({
 ```
 GET /v3/matic/single-nft/<contract_address>/<creator_address>/creator-nfts
 ```
-```js
-result = client.polygon.GetSingleNftCreatorNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'creator_address' : "토큰 목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNftCreatorNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "creator_address" : "토큰 목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -264,12 +279,12 @@ result = client.polygon.GetSingleNftCreatorNfts({
 ```
 GET /v3/matic/single-nft/<contract_address>/<from_address>/from-transactions
 ```
-```js
-result = client.polygon.GetSingleNftTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNftTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -278,12 +293,12 @@ result = client.polygon.GetSingleNftTxs({
 ```
 GET /v3/matic/single-nft/<contract_address>/<token_id>/nft-transactions
 ```
-```js
-result = client.polygon.GetSingleNftTokenTxs({
-    'contract_address' :  "NFT 컨트렉트 주소",
-    'token_id' :  "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNftTokenTxs(map[string]interface{}{
+    "contract_address" :  "NFT 컨트렉트 주소",
+    "token_id" :  "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -292,12 +307,12 @@ result = client.polygon.GetSingleNftTokenTxs({
 ```
 GET /v3/matic/single-nft/<contract_address>/<token_id>/info
 ```
-```js
-result = client.polygon.GetSingleNftInfo({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' :  "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetSingleNftInfo(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" :  "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -306,11 +321,11 @@ result = client.polygon.GetSingleNftInfo({
 ```
 GET /v3/matic/multi-nft/<contract_address>/nfts
 ```
-```js
-result = client.polygon.GetMultiNfts({
-    'contract_address' :"NFT 컨트렉트 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNfts(map[string]interface{}{
+    "contract_address" :"NFT 컨트렉트 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -319,11 +334,11 @@ result = client.polygon.GetMultiNfts({
 ```
 GET /v3/matic/multi-nft/<owner_address>/owner-nfts
 ```
-```js
-result = client.polygon.GetMultiOwnerNfts({
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiOwnerNfts(map[string]interface{}{
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -332,11 +347,11 @@ result = client.polygon.GetMultiOwnerNfts({
 ```
 GET /v3/matic/multi-nft/<creator_address>/creator-nfts
 ```
-```js
-result = client.polygon.GetMultiCreatorNfts({
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiCreatorNfts(map[string]interface{}{
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -345,11 +360,11 @@ result = client.polygon.GetMultiCreatorNfts({
 ```
 GET /v3/matic/multi-nft/<from_address>/transactions
 ```
-```js
-result = client.polygon.GetMultiTxs({
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiTxs(map[string]interface{}{
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -358,12 +373,12 @@ result = client.polygon.GetMultiTxs({
 ```
 GET /v3/matic/multi-nft/<contract_address>/<owner_address>/owner-nfts
 ```
-```js
-result = client.polygon.GetMultiNftOwnerNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'owner_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNftOwnerNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "owner_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -372,12 +387,12 @@ result = client.polygon.GetMultiNftOwnerNfts({
 ```
 GET /v3/matic/multi-nft/<contract_address>/<creator_address>/creator-nfts
 ```
-```js
-result = client.polygon.GetMultiNftCreatorNfts({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'creator_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNftCreatorNfts(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "creator_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -386,12 +401,12 @@ result = client.polygon.GetMultiNftCreatorNfts({
 ```
 GET /v3/matic/multi-nft/<contract_address>/<from_address>/from-transactions
 ```
-```js
-result = client.polygon.GetMultiNftTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'from_address' : "목록을 조회할 주소",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNftTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "from_address" : "목록을 조회할 주소",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -400,12 +415,12 @@ result = client.polygon.GetMultiNftTxs({
 ```
 GET /v3/matic/multi-nft/<contract_address>/<token_id>/info
 ```
-```js
-result = client.polygon.GetMultiNftInfo({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' : "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNftInfo(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" : "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -414,12 +429,12 @@ result = client.polygon.GetMultiNftInfo({
 ```
 GET /v3/matic/multi-nft/<contract_address>/<token_id>/nft-transactions
 ```
-```js
-result = client.polygon.GetMultiNftTokenTxs({
-    'contract_address' : "NFT 컨트렉트 주소",
-    'token_id' : "NFT 토큰 ID",
-    'offset' : 0,
-    'limit' : 10
+```go
+result, err := maticClient.GetMultiNftTokenTxs(map[string]interface{}{
+    "contract_address" : "NFT 컨트렉트 주소",
+    "token_id" : "NFT 토큰 ID",
+    "offset" : "0",
+    "limit" : "10",
 });
 ```
 
@@ -428,13 +443,13 @@ result = client.polygon.GetMultiNftTokenTxs({
 ```
 POST /v3/matic/contract/<contract_address>/read
 ```
-```js
-result = client.polygon.ReadContract({
-    'contract_address' : "컨트렉트 주소",
-    'method' : "실행할 함수 명",
-    'return_type' : "반환 데이터 타입",
-    'parameter_type' : ["인풋 파라미터 타입"],
-    'parameter_data' : ["인풋 파라미터 데이터"]
+```go
+result, err := maticClient.ReadContract(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "method" : "실행할 함수 명",
+    "return_type" : "반환 데이터 타입",
+    "parameter_type" : []interface{}{"인풋 파라미터 타입"},
+    "parameter_data" : []interface{}{"인풋 파라미터 데이터"},
 });
 ```
 
@@ -443,13 +458,13 @@ result = client.polygon.ReadContract({
 ```
 POST /v3/matic/contract/<contract_address>/write
 ```
-```js
-result = client.polygon.WriteContract({
-    'contract_address' : "컨트렉트 주소",
-    'from' : "트랜잭션을 생성할 주소",
-    'private_key' : "from 의 프라이빗키",
-    'method' : "실행할 함수 명",
-    'parameter_type' : ["인풋 파라미터 타입"],
-    'parameter_data' : ["인풋 파라미터 데이터"]
+```go
+result, err := maticClient.WriteContract(map[string]interface{}{
+    "contract_address" : "컨트렉트 주소",
+    "from" : "트랜잭션을 생성할 주소",
+    "private_key" : "from 의 프라이빗키",
+    "method" : "실행할 함수 명",
+    "parameter_type" : []interface{}{"인풋 파라미터 타입"},
+    "parameter_data" : []interface{}{"인풋 파라미터 데이터"},
 });
 ```
